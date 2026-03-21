@@ -1,0 +1,87 @@
+name: HandLend Feature Request
+description: Propose a HandLend feature or product/documentation improvement
+labels: ["enhancement", "status:needs-review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Feature Request
+
+        Use this template for changes to HandLend product behavior, documentation, or implementation slices.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to Solve
+      description: Describe the user or product problem.
+      placeholder: Donors cannot..., Coordinators need..., Operators struggle with...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: actor
+    attributes:
+      label: Primary Actor
+      options:
+        - Donor
+        - Coordinator
+        - Operator
+        - Shared / Multiple actors
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: screens
+    attributes:
+      label: Affected Screens
+      options:
+        - label: D-01 Disaster selection
+        - label: D-02 Logistics comparison
+        - label: D-03 Company profile
+        - label: D-04 Wallet / contribution
+        - label: D-05 Reporting timeline
+        - label: C-01 Legal registration
+        - label: C-02 Operational planning
+        - label: C-03 Operator CRUD
+        - label: C-04 Coordinator dashboard
+        - label: O-01 Delivery capture
+        - label: O-02 Settlement / closure
+
+  - type: checkboxes
+    id: stack_impact
+    attributes:
+      label: Stack and Capability Impact
+      options:
+        - label: Next.js UX
+        - label: Python backend
+        - label: Avalanche settlement
+        - label: Escrow rules
+        - label: GenLayer scoring or validation
+        - label: Aave optional liquidity module
+        - label: Offline queue / sync
+        - label: Timeline / reporting
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Change
+      description: Explain the intended behavior or documentation update.
+    validations:
+      required: true
+
+  - type: textarea
+    id: pdf_alignment
+    attributes:
+      label: Alignment With Source PDFs
+      description: Explain how this request aligns with the SDD, Stack, and UX PDFs.
+      placeholder: Mention the affected actor flow, stack role, and screen references.
+    validations:
+      required: true
+
+  - type: textarea
+    id: success
+    attributes:
+      label: Success Criteria
+      description: How will we know this request is complete?
+    validations:
+      required: true
