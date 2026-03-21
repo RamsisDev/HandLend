@@ -10,6 +10,14 @@ This repository uses Spec-Driven Development as the operating model for HandLend
 
 Everything in this repo must stay consistent with those documents.
 
+## Delivery Rules
+
+- `SDD Handlend.md` is the implementation sequence for the application. Build one slice at a time and keep it mapped to actor and screen IDs.
+- `UX Spec _ Product Design Document.md` is the UI decision reference. Every `Ant Design` pattern choice should be checked against it before implementation.
+- `Ant Design` is the only approved UI component library for new UI work and UI refactors.
+- `Playwright` is the mandatory browser-testing strategy for UI, navigation, form, and actor-flow verification.
+- Do not start the next feature until the current one has recorded progress and a `PASS` verification report.
+
 ## Product Summary
 
 HandLend connects three actors:
@@ -49,6 +57,7 @@ HandLend connects three actors:
 - [Artifact Source of Truth](docs/persistence.md)
 - [Agent Workflow for HandLend](docs/sub-agents.md)
 - [Contributor Workspace Guide](docs/installation.md)
+- [Implementation Progress](progress.md)
 
 ## Initial SDD Changes
 
@@ -62,6 +71,10 @@ These change sets are the initial roadmap and the primary implementation slices 
 
 - Every proposal, spec, design, task list, issue, and PR must map to at least one actor.
 - When relevant, work must name the affected screen IDs: `D-01..D-05`, `C-01..C-04`, `O-01..O-02`.
+- Use `Ant Design` as the sole UI library and justify component decisions against `UX Spec _ Product Design Document.md`.
+- Use `SDD Handlend.md` as the sequencing source for iterative delivery.
+- Record current status in `progress.md` and in the corresponding `openspec/changes/*` artifacts.
+- Require Playwright verification with a real browser for UI and actor-flow work before continuing to a new feature.
 - Documentation must use product language for financial closure:
   `delivery recorded`, `evidence validated`, `settlement in progress`, `advance deducted`, `margin transferred`, `operation closed`.
 - Do not describe Aave as a critical MVP dependency.

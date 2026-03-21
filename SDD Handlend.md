@@ -817,7 +817,7 @@ Con este SDD, yo lo implementaría así:
 * **TanStack Query**  
 * **IndexedDB** para cola offline del operador  
 * **wagmi / ethers** si van a conectar wallet EVM  
-* UI simple tipo shadcn o Tailwind
+* UI implementada con Ant Design como libreria unica de componentes, validando cada decision contra UX Spec _ Product Design Document.md
 
 ## **Backend**
 
@@ -866,4 +866,3 @@ La formulación correcta es algo como:
 Eso es mucho más coherente con tus PDFs, con el hackathon y con el SDD que acabo de armar.
 
 En el siguiente paso te puedo dejar esto todavía más útil: una **versión lista para copiar y pegar en archivos reales**, con formato pulido de repo y un `README` técnico que conecte todo.
-

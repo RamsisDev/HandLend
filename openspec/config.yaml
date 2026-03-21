@@ -1,0 +1,37 @@
+schema: spec-driven
+
+context: |
+  Product: HandLend
+  Source order: PDFs first, then SDD Handlend.md, then UX Spec _ Product Design Document.md
+  UI library: Ant Design only
+  UI validation: Cross-check against UX spec before implementation
+  Workflow: Build one feature slice at a time and keep progress.md synchronized
+  Verification: Tests are mandatory and Playwright is required for UI and actor flows
+
+rules:
+  proposal:
+    - Map every change to at least one actor and, when relevant, to D-01..D-05, C-01..C-04, or O-01..O-02
+    - Identify where the change belongs in SDD Handlend.md
+  specs:
+    - Use Given/When/Then scenarios
+    - Reference affected actors and screens explicitly
+  design:
+    - Use Ant Design as the only UI component library
+    - Validate UI decisions against UX Spec _ Product Design Document.md
+  tasks:
+    - Work one feature slice at a time
+    - Include implementation, test, Playwright verification, and progress update tasks
+  apply:
+    tdd: true
+    test_command: "python -c \"raise SystemExit('Define and run the exact project test command for this slice before closing the task')\""
+    browser_verification: required
+    progress_file: "progress.md"
+    gate_next_feature_on_verify_pass: true
+  verify:
+    test_command: "python -c \"raise SystemExit('Define and run the exact project test command for this slice before verification can pass')\""
+    build_command: "python -c \"raise SystemExit('Define and run the exact build or type-check command for this slice before verification can pass')\""
+    browser_verification: required_for_ui
+    coverage_threshold: ""
+    gate_next_feature_on_pass_only: true
+  archive:
+    - Do not archive or move to a new slice until verify-report verdict is PASS

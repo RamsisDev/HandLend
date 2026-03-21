@@ -2,6 +2,8 @@
 
 When working on this project, load the relevant skill(s) before writing code or changing product documentation.
 
+HandLend is built iteratively from `SDD Handlend.md`. Do not start a new feature slice until the current slice has implementation evidence, a recorded verification result, and an updated progress entry.
+
 ## Source Documents
 
 These files are the authority for the repo:
@@ -9,6 +11,8 @@ These files are the authority for the repo:
 1. `SDD Handlend.pdf`
 2. `Stack HandLend.pdf`
 3. `UX Spec _ Product Design Document.pdf`
+4. `SDD Handlend.md`
+5. `UX Spec _ Product Design Document.md`
 
 If an artifact conflicts with one of these PDFs, update the artifact to match the PDFs unless the user explicitly asks to change the product definition.
 
@@ -23,14 +27,20 @@ All proposals, specs, designs, task lists, implementations, bugs, and PRs must r
 - Respect the stack contract:
   `Avalanche` executes and settles, `escrow` locks and releases, `GenLayer` scores and validates, `Aave` is optional for MVP.
 - Prefer product language over blockchain jargon in user-facing artifacts.
+- Use `Ant Design` as the only approved UI component library for new UI work and UI refactors.
+- Before choosing or composing an `Ant Design` pattern, validate the interaction against `UX Spec _ Product Design Document.md`.
+- Keep `progress.md` current so work can resume cleanly after interruptions.
 
 ## How To Work In This Repo
 
 1. Identify whether the task affects product vision, domain language, specs, design, tasks, implementation, or verification.
 2. Load the relevant skill from the index below.
-3. Read the HandLend artifacts that govern the affected area.
-4. Make the change while preserving SDD, stack, and UX alignment.
-5. Update affected documentation so the repo stays decision-complete.
+3. Read the HandLend artifacts that govern the affected area, starting with `SDD Handlend.md` for implementation sequence and `UX Spec _ Product Design Document.md` for screen behavior.
+4. If the change touches UI, plan it with `Ant Design` and validate the pattern choice against the UX spec before implementation.
+5. If the change affects behavior, testing, navigation, forms, or actor flows, prepare Playwright verification that opens a real browser.
+6. Make the change while preserving SDD, stack, and UX alignment.
+7. Record implementation status in `progress.md` and the relevant `openspec` change artifacts.
+8. Do not begin the next feature until the current one has a `PASS` verification outcome in its `verify-report`.
 
 ## Skills
 
@@ -45,6 +55,7 @@ All proposals, specs, designs, task lists, implementations, bugs, and PRs must r
 | `sdd-apply` | When implementing tasks in docs, frontend, backend, contracts, or workflow artifacts. | [`skills/sdd-apply/SKILL.md`](skills/sdd-apply/SKILL.md) |
 | `sdd-verify` | When validating that implementation still matches the HandLend PDFs and repo artifacts. | [`skills/sdd-verify/SKILL.md`](skills/sdd-verify/SKILL.md) |
 | `sdd-archive` | When archiving a completed HandLend change after implementation and verification. | [`skills/sdd-archive/SKILL.md`](skills/sdd-archive/SKILL.md) |
+| `handlend-playwright` | When verifying UI flows, actor journeys, screen behavior, or browser-based acceptance criteria with Playwright. | [`skills/handlend-playwright/SKILL.md`](skills/handlend-playwright/SKILL.md) |
 | `skill-registry` | When updating the project skill registry and conventions for HandLend work. | [`skills/skill-registry/SKILL.md`](skills/skill-registry/SKILL.md) |
 | `issue-creation` | When creating a GitHub issue for a HandLend bug, flow gap, or feature. | [`skills/issue-creation/SKILL.md`](skills/issue-creation/SKILL.md) |
 | `branch-pr` | When preparing HandLend documentation or implementation changes for review. | [`skills/branch-pr/SKILL.md`](skills/branch-pr/SKILL.md) |

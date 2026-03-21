@@ -11,3 +11,6 @@ Thumbs.db
 
 # Node (in case anyone adds tooling later)
 node_modules/
+
+# Local orchestration artifacts
+.atl/

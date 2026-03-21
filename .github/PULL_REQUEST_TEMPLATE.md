@@ -44,8 +44,14 @@ Closes #
 - [ ] Verified actor and screen traceability
 - [ ] Confirmed Aave is not treated as a critical MVP dependency
 - [ ] Confirmed user-facing language uses readable settlement states
+- [ ] Confirmed `Ant Design` is the only UI library used for new UI or refactors
+- [ ] Confirmed UI decisions were validated against `UX Spec _ Product Design Document.md`
+- [ ] Linked executed verification evidence, including Playwright when UI or actor flows changed
+- [ ] Confirmed the related `verify-report` verdict is `PASS` before advancing to the next feature
 
 ## Notes for Reviewers
 
 - relevant artifacts updated:
+- verify-report reference:
+- progress.md updated:
 - residual risk:
