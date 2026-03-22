@@ -248,7 +248,7 @@ export default function GlassShell({ children }: { children: React.ReactNode }) 
         <Header className={styles.topHeader}>
           <div className={styles.searchBar}>
             <SearchOutlined />
-            <span>Search humanitarian initiatives...</span>
+            <span style={{ lineHeight: '10px' }}>Search humanitarian initiatives...</span>
           </div>
           <Space size={8} style={{ marginLeft: 16 }}>
             <Tooltip title="Notifications">
