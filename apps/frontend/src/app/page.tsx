@@ -17,7 +17,7 @@ const CAMPAIGNS = [
   {
     id: 1, title: 'Valparaíso Earthquake Relief', country: 'Chile',
     category: 'Earthquake',
-    image: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=600&q=80',
+    image: 'https://static.scientificamerican.com/sciam/cache/file/7F5C87CE-C719-4650-B4E8AEF44415E806_source.jpg?w=600',
     progress: 78, raised: '$78k', goal: '$100k', operators: 3, deliveries: 36,
   },
   {
@@ -29,7 +29,7 @@ const CAMPAIGNS = [
   {
     id: 3, title: 'Gran Chaco Food Security Initiative', country: 'Paraguay',
     category: 'Drought',
-    image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=600&q=80',
+    image: 'https://www.preventionweb.net/sites/default/files/styles/landscape_16_9/public/2021-09/shutterstock_1205889976.jpg?itok=khMiOA4L',
     progress: 31, raised: '$9.3k', goal: '$30k', operators: 1, deliveries: 8,
   },
 ]
