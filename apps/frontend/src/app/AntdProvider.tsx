@@ -5,6 +5,7 @@ import { ConfigProvider, App } from 'antd'
 import { StyleProvider } from 'antd-style'
 import enUS from 'antd/locale/en_US'
 import useGlassTheme from '@/lib/glassTheme'
+import { AuthProvider } from '@/lib/authContext'
 
 function ThemedApp({ children }: { children: React.ReactNode }) {
   const configProps = useGlassTheme()
@@ -21,8 +22,11 @@ export default function AntdProvider({ children }: { children: React.ReactNode }
   return (
     <AntdRegistry>
       <StyleProvider>
-        <ThemedApp>{children}</ThemedApp>
+        <ThemedApp>
+          <AuthProvider>{children}</AuthProvider>
+        </ThemedApp>
       </StyleProvider>
     </AntdRegistry>
   )
 }
+

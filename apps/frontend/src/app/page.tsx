@@ -541,7 +541,13 @@ export default function DiscoveryPage() {
           <div
             key={c.id}
             className={styles.campaignCard}
-            onClick={() => router.push('/donor/disasters')}
+            onClick={() => {
+              localStorage.setItem('selectedDisaster', JSON.stringify({
+                id: c.id, name: c.title, country: c.country,
+                event_type: c.category, status: 'active',
+              }))
+              router.push(`/donor/companies?disaster_id=${c.id}`)
+            }}
             data-testid={`campaign-card-${c.id}`}
           >
             <div className={styles.cardImgWrap}>
@@ -568,7 +574,14 @@ export default function DiscoveryPage() {
                 </div>
                 <div
                   className={styles.addBtn}
-                  onClick={e => { e.stopPropagation(); router.push('/donor/disasters') }}
+                  onClick={e => {
+                    e.stopPropagation()
+                    localStorage.setItem('selectedDisaster', JSON.stringify({
+                      id: c.id, name: c.title, country: c.country,
+                      event_type: c.category, status: 'active',
+                    }))
+                    router.push(`/donor/companies?disaster_id=${c.id}`)
+                  }}
                   data-testid={`btn-fund-${c.id}`}
                 >
                   +

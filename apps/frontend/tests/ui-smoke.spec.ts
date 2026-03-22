@@ -1,5 +1,14 @@
 import { test, expect } from '@playwright/test'
 
+/** Helper: log in as seed coordinator via the login form */
+async function coordinatorLogin(page: import('@playwright/test').Page) {
+  await page.goto('/coordinator/login')
+  await page.getByTestId('login-email').fill('rfernandez@logihumanitas.cl')
+  await page.getByTestId('login-password').fill('coord2026')
+  await page.getByTestId('login-submit').click()
+  await page.waitForURL(/\/coordinator\/dashboard/, { timeout: 10000 })
+}
+
 test.describe('HandLend UI Smoke Tests', () => {
 
   test('Home page loads with hero section and campaign grid', async ({ page }) => {
@@ -48,9 +57,8 @@ test.describe('HandLend UI Smoke Tests', () => {
     await expect(page.locator('form, .ant-form').first()).toBeVisible({ timeout: 10000 })
   })
 
-  test('Coordinator dashboard page loads with stats', async ({ page }) => {
-    await page.goto('/coordinator/dashboard')
-    await page.waitForLoadState('networkidle')
+  test('Coordinator dashboard page loads with stats (after login)', async ({ page }) => {
+    await coordinatorLogin(page)
     // Statistic cards should be visible
     await expect(page.locator('.ant-statistic').first()).toBeVisible({ timeout: 10000 })
   })
@@ -73,13 +81,14 @@ test.describe('HandLend UI Smoke Tests', () => {
     await expect(page).toHaveURL(/\/operator\/delivery/)
   })
 
-  test('Desktop sidebar nav - Coordinator link', async ({ page }) => {
+  test('Desktop sidebar nav - Coordinator link redirects to login', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 })
     await page.goto('/')
     const coordinatorNav = page.getByTestId('nav-coordinator')
     await expect(coordinatorNav).toBeVisible()
     await coordinatorNav.click()
-    await expect(page).toHaveURL(/\/coordinator\/dashboard/)
+    // Should redirect to login since not authenticated
+    await expect(page).toHaveURL(/\/coordinator\/login/, { timeout: 10000 })
   })
 
   test('Fund Campaign button CTA in sidebar navigates correctly', async ({ page }) => {
@@ -119,4 +128,44 @@ test.describe('HandLend UI Smoke Tests', () => {
     await expect(timeline.first()).toBeVisible({ timeout: 10000 })
   })
 
+  /* ── Coordinator Auth Tests ── */
+
+  test('Coordinator dashboard redirects to login when unauthenticated', async ({ page }) => {
+    await page.goto('/coordinator/dashboard')
+    await expect(page).toHaveURL(/\/coordinator\/login/, { timeout: 10000 })
+    await expect(page.getByTestId('coordinator-login-page')).toBeVisible()
+  })
+
+  test('Coordinator login page shows login and register tabs', async ({ page }) => {
+    await page.goto('/coordinator/login')
+    await expect(page.getByTestId('coordinator-login-page')).toBeVisible()
+    await expect(page.getByTestId('login-email')).toBeVisible()
+    await expect(page.getByTestId('login-password')).toBeVisible()
+    // Switch to register tab
+    await page.getByRole('tab', { name: /register/i }).click()
+    await expect(page.getByTestId('register-name')).toBeVisible()
+    await expect(page.getByTestId('register-email')).toBeVisible()
+    await expect(page.getByTestId('register-password')).toBeVisible()
+  })
+
+  test('Coordinator login flow grants access to dashboard', async ({ page }) => {
+    await coordinatorLogin(page)
+    await expect(page).toHaveURL(/\/coordinator\/dashboard/)
+    await expect(page.locator('.ant-statistic').first()).toBeVisible({ timeout: 10000 })
+  })
+
+  test('Coordinator register flow grants access to dashboard', async ({ page }) => {
+    await page.goto('/coordinator/login')
+    // Switch to register tab
+    await page.getByRole('tab', { name: /register/i }).click()
+    await page.getByTestId('register-name').fill('Test Coordinator')
+    await page.getByTestId('register-email').fill(`test${Date.now()}@example.com`)
+    await page.getByTestId('register-password').fill('test1234')
+    await page.getByTestId('register-confirm').fill('test1234')
+    await page.getByTestId('register-submit').click()
+    await page.waitForURL(/\/coordinator\/dashboard/, { timeout: 10000 })
+    await expect(page.locator('.ant-statistic').first()).toBeVisible({ timeout: 10000 })
+  })
+
 })
+

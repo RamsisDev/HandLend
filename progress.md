@@ -20,8 +20,8 @@ This file is the visible progress board for implementation driven by `SDD Handle
 
 | Slice | Actor | Screens | Status | Openspec artifact | Last verification | Evidence |
 |------|-------|---------|--------|-------------------|-------------------|----------|
-| mission-funding-and-proof | Donor, Operator | D-01, D-02, D-03, D-04, D-05, O-01, O-02 | in progress | `openspec/changes/mission-funding-and-proof/` | not run | Frontend: `apps/frontend/src/app/donor/` + `apps/frontend/src/app/operator/`. Backend: `apps/backend/` (FastAPI + SQLite). Awaiting Playwright verification. |
-| logistics-operations | Coordinator | C-01, C-02, C-03, C-04 | in progress | `openspec/changes/logistics-operations/` | not run | Frontend: `apps/frontend/src/app/coordinator/`. Backend: coordinator endpoints in `apps/backend/main.py`. Awaiting Playwright verification. |
+| mission-funding-and-proof | Donor, Operator | D-01, D-02, D-03, D-04, D-05, O-01, O-02 | in progress | `openspec/changes/mission-funding-and-proof/` | FAIL | Frontend: `apps/frontend/src/app/donor/` + `apps/frontend/src/app/operator/`. Backend: FastAPI. [Verify Report](openspec/changes/mission-funding-and-proof/verify-report.md). |
+| logistics-operations | Coordinator | C-01, C-02, C-03, C-04 | in progress | `openspec/changes/logistics-operations/` | FAIL | Frontend: `apps/frontend/src/app/coordinator/`. Backend: coordinator endpoints in `apps/backend/main.py`. [Verify Report](openspec/changes/logistics-operations/verify-report.md). |
 | reporting-timeline | Donor, Operator | D-05, O-02 | pending | `openspec/changes/reporting-timeline/` | not run | Awaiting slice 1 PASS. Timeline UI partially covered in D-05 and O-02. |
 
 ## Current Gate

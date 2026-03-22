@@ -3,14 +3,16 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  Card, Form, Input, Select, Button, Table, Tag, Space,
-  Typography, Divider, message
+  Card, Form, Input, Button, Table, Tag, Space,
+  Typography, Divider, message, Badge, Avatar,
 } from 'antd'
 import {
   QrcodeOutlined, SyncOutlined, SaveOutlined,
   EnvironmentOutlined, ClockCircleOutlined, CheckCircleOutlined,
-  WarningOutlined, LoadingOutlined,
+  WarningOutlined, LoadingOutlined, WifiOutlined,
+  UserOutlined,
 } from '@ant-design/icons'
+import { createStyles } from 'antd-style'
 import { syncDeliveries } from '@/lib/api'
 import type { DeliveryQueueItem } from '@/lib/mockData'
 
@@ -18,10 +20,36 @@ const { Title, Text } = Typography
 
 const STORAGE_KEY = 'handlend_queue'
 
-const OPERATOR_OPTIONS = [
-  { value: 'Carlos Mendez', label: 'Carlos Mendez' },
-  { value: 'Ana Torres', label: 'Ana Torres' },
-]
+/* ── Mock operator identity (simulates the logged-in field operator) ── */
+const OPERATOR = { id: 1, name: 'Carlos Mendez', email: 'carlos@logihumanitas.cl' }
+
+const useStyles = createStyles(({ css }) => ({
+  statusBar: css({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    gap: 12,
+    padding: '12px 16px',
+    background: 'rgba(15,23,42,0.5)',
+    backdropFilter: 'blur(12px)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: 12,
+    marginBottom: 16,
+  }),
+  operatorBadge: css({
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+  }),
+  statusItem: css({
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
+    fontSize: 13,
+    fontWeight: 600,
+  }),
+}))
 
 function getSyncTag(status: string) {
   switch (status) {
@@ -35,17 +63,30 @@ function getSyncTag(status: string) {
 
 export default function DeliveryPage() {
   const router = useRouter()
+  const { styles } = useStyles()
   const [form] = Form.useForm()
   const [queue, setQueue] = useState<DeliveryQueueItem[]>([])
   const [syncing, setSyncing] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [isOnline, setIsOnline] = useState(true)
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (stored) {
-      try { setQueue(JSON.parse(stored)) } catch {}
+      try { setQueue(JSON.parse(stored)) } catch { /* ignore */ }
     }
-    form.setFieldsValue({ operator_name: 'Carlos Mendez', gps_status: 'GPS captured: -33.047, -71.607' })
+    form.setFieldsValue({ gps_status: 'GPS captured: -33.047, -71.607' })
+
+    // Online/offline listeners
+    const goOnline = () => setIsOnline(true)
+    const goOffline = () => setIsOnline(false)
+    setIsOnline(navigator.onLine)
+    window.addEventListener('online', goOnline)
+    window.addEventListener('offline', goOffline)
+    return () => {
+      window.removeEventListener('online', goOnline)
+      window.removeEventListener('offline', goOffline)
+    }
   }, [form])
 
   function saveQueue(newQueue: DeliveryQueueItem[]) {
@@ -61,11 +102,11 @@ export default function DeliveryPage() {
 
   async function handleSave() {
     try {
-      const values = await form.validateFields(['operator_name', 'lot_id', 'qr_result'])
+      const values = await form.validateFields(['lot_id', 'qr_result'])
       setSaving(true)
       const item: DeliveryQueueItem = {
         client_event_id: crypto.randomUUID(),
-        operator_name: values.operator_name,
+        operator_name: OPERATOR.name,
         lot_id: values.lot_id,
         qr_result: values.qr_result,
         gps_status: 'GPS captured: -33.047, -71.607',
@@ -76,7 +117,7 @@ export default function DeliveryPage() {
       const newQueue = [item, ...queue]
       saveQueue(newQueue)
       form.resetFields(['lot_id', 'qr_result', 'note'])
-      form.setFieldsValue({ operator_name: values.operator_name, gps_status: 'GPS captured: -33.047, -71.607' })
+      form.setFieldsValue({ gps_status: 'GPS captured: -33.047, -71.607' })
       message.success('Delivery saved to queue')
     } catch {
       // validation error — antd handles display
@@ -99,7 +140,6 @@ export default function DeliveryPage() {
     saveQueue(sending)
 
     await new Promise(r => setTimeout(r, 2000))
-
     await syncDeliveries(pending)
 
     const synced = sending.map(e =>
@@ -120,11 +160,6 @@ export default function DeliveryPage() {
       render: (v: string) => <Text code>{v}</Text>,
     },
     {
-      title: 'Operator',
-      dataIndex: 'operator_name',
-      key: 'operator_name',
-    },
-    {
       title: 'QR',
       dataIndex: 'qr_result',
       key: 'qr_result',
@@ -132,7 +167,7 @@ export default function DeliveryPage() {
       render: (v: string) => <Text code style={{ fontSize: '12px' }}>{v}</Text>,
     },
     {
-      title: 'Timestamp',
+      title: 'Time',
       dataIndex: 'timestamp',
       key: 'timestamp',
       render: (v: string) => {
@@ -163,81 +198,107 @@ export default function DeliveryPage() {
   ]
 
   return (
-    <div style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
-        <Title level={2} style={{ margin: 0 }}>Delivery register</Title>
-        <Button
-          type={pendingCount > 0 ? 'primary' : 'default'}
-          icon={<SyncOutlined spin={syncing} />}
-          onClick={handleSync}
-          loading={syncing}
-        >
-          {pendingCount > 0 ? `Sync pending (${pendingCount})` : 'Sync'}
-        </Button>
+    <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto' }}>
+      {/* ── O-01-A: Status Indicators ── */}
+      <div className={styles.statusBar} data-testid="operator-status-bar">
+        <div className={styles.operatorBadge}>
+          <Avatar
+            size={32}
+            style={{ background: '#2dd4bf', color: '#0f172a', fontWeight: 700 }}
+            icon={<UserOutlined />}
+          >
+            {OPERATOR.name[0]}
+          </Avatar>
+          <div>
+            <Text strong style={{ display: 'block', lineHeight: 1.2 }}>{OPERATOR.name}</Text>
+            <Text type="secondary" style={{ fontSize: 11 }}>Field Operator</Text>
+          </div>
+        </div>
+        <Space size={16}>
+          <div className={styles.statusItem}>
+            <Badge status={isOnline ? 'success' : 'error'} />
+            <span>{isOnline ? 'Online' : 'Offline'}</span>
+          </div>
+          {pendingCount > 0 && (
+            <div className={styles.statusItem}>
+              <Badge count={pendingCount} size="small" />
+              <span>pending</span>
+            </div>
+          )}
+        </Space>
       </div>
 
-      <Card title="New delivery" style={{ marginBottom: '24px' }}>
-        <Form form={form} layout="vertical">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 16px' }}>
-            <Form.Item
-              name="operator_name"
-              label="Operator"
-              rules={[{ required: true, message: 'Select an operator' }]}
-            >
-              <Select size="large" options={OPERATOR_OPTIONS} />
-            </Form.Item>
+      <Title level={3} style={{ margin: '0 0 16px' }}>Register Delivery</Title>
 
-            <Form.Item
-              name="lot_id"
-              label="Lot ID"
-              rules={[{ required: true, message: 'Enter the lot ID' }]}
-            >
-              <Input size="large" placeholder="LOT-001" />
-            </Form.Item>
+      {/* ── O-01-B: Capture Form (single-column, mobile-first) ── */}
+      <Card style={{ marginBottom: 16 }}>
+        <Form form={form} layout="vertical" data-testid="delivery-form">
+          <Form.Item
+            name="lot_id"
+            label="Lot ID"
+            rules={[{ required: true, message: 'Enter the lot ID' }]}
+          >
+            <Input size="large" placeholder="LOT-001" data-testid="lot-id-input" />
+          </Form.Item>
 
-            <Form.Item
-              name="qr_result"
-              label="QR result"
-              rules={[{ required: true, message: 'Enter or simulate the QR' }]}
-              style={{ gridColumn: '1 / -1' }}
-            >
-              <Space.Compact style={{ width: '100%' }}>
-                <Input size="large" placeholder="Scan or simulate the QR code" />
-                <Button size="large" icon={<QrcodeOutlined />} onClick={handleSimulateQR}>
-                  Simulate QR scan
-                </Button>
-              </Space.Compact>
-            </Form.Item>
+          <Form.Item
+            name="qr_result"
+            label="QR result"
+            rules={[{ required: true, message: 'Scan or simulate the QR' }]}
+          >
+            <Space.Compact style={{ width: '100%' }}>
+              <Input size="large" placeholder="Scan the QR code" data-testid="qr-input" />
+              <Button size="large" icon={<QrcodeOutlined />} onClick={handleSimulateQR} data-testid="qr-simulate-btn">
+                Simulate QR scan
+              </Button>
+            </Space.Compact>
+          </Form.Item>
 
-            <Form.Item name="gps_status" label="GPS status">
-              <Input
-                size="large"
-                readOnly
-                prefix={<EnvironmentOutlined style={{ color: '#52c41a' }} />}
-                style={{ background: '#f6ffed' }}
-              />
-            </Form.Item>
+          {/* O-01-C: GPS feedback */}
+          <Form.Item name="gps_status" label="GPS status">
+            <Input
+              size="large"
+              readOnly
+              prefix={<EnvironmentOutlined style={{ color: '#52c41a' }} />}
+              style={{ background: 'rgba(82,196,26,0.08)' }}
+              data-testid="gps-status"
+            />
+          </Form.Item>
 
-            <Form.Item name="note" label="Note (optional)">
-              <Input.TextArea rows={2} placeholder="Observations about the delivery..." />
-            </Form.Item>
-          </div>
+          <Form.Item name="note" label="Note (optional)">
+            <Input.TextArea rows={2} placeholder="Observations about the delivery..." data-testid="note-input" />
+          </Form.Item>
 
           <Form.Item style={{ marginBottom: 0 }}>
             <Button
               type="primary"
               size="large"
+              block
               icon={<SaveOutlined />}
               onClick={handleSave}
               loading={saving}
+              data-testid="save-delivery-btn"
+              style={{ height: 48, fontWeight: 700, fontSize: 15 }}
             >
-              Save delivery
+              Save Delivery
             </Button>
           </Form.Item>
         </Form>
       </Card>
 
-      <Divider>Delivery queue ({queue.length})</Divider>
+      {/* ── O-01-D: Offline Queue ── */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <Text strong style={{ fontSize: 15 }}>Delivery Queue ({queue.length})</Text>
+        <Button
+          type={pendingCount > 0 ? 'primary' : 'default'}
+          icon={<SyncOutlined spin={syncing} />}
+          onClick={handleSync}
+          loading={syncing}
+          data-testid="sync-btn"
+        >
+          {pendingCount > 0 ? `Sync (${pendingCount})` : 'Sync'}
+        </Button>
+      </div>
 
       {queue.length === 0 ? (
         <Card>
@@ -252,8 +313,8 @@ export default function DeliveryPage() {
           columns={columns}
           rowKey="client_event_id"
           pagination={{ pageSize: 10 }}
-          scroll={{ x: 700 }}
-          size="middle"
+          scroll={{ x: 500 }}
+          size="small"
         />
       )}
     </div>

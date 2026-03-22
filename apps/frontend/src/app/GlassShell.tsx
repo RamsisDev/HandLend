@@ -5,11 +5,13 @@ import { Layout, Button, Space, Typography, Badge, Avatar, Tooltip, Switch } fro
 import {
   HeartOutlined, ToolOutlined, TeamOutlined, HomeOutlined,
   WalletOutlined, BellOutlined, MenuOutlined, CloseOutlined,
-  SearchOutlined, ThunderboltOutlined, BarChartOutlined
+  SearchOutlined, ThunderboltOutlined, BarChartOutlined,
+  LogoutOutlined,
 } from '@ant-design/icons'
 import { usePathname, useRouter } from 'next/navigation'
 import { createStyles } from 'antd-style'
 import clsx from 'clsx'
+import { useAuth } from '@/lib/authContext'
 
 const { Sider, Content, Header } = Layout
 const { Text } = Typography
@@ -159,6 +161,9 @@ export default function GlassShell({ children }: { children: React.ReactNode }) 
   const { styles } = useStyles()
   const pathname = usePathname()
   const router = useRouter()
+  const { user, isAuthenticated, logout } = useAuth()
+
+  const isCoordinatorRoute = pathname.startsWith('/coordinator')
 
   const isActive = (match: string) =>
     match === '/' ? pathname === '/' : pathname.startsWith(match)
@@ -220,6 +225,19 @@ export default function GlassShell({ children }: { children: React.ReactNode }) 
             >
               Register Delivery
             </Button>
+            {isCoordinatorRoute && isAuthenticated && (
+              <Button
+                block
+                size="middle"
+                icon={<LogoutOutlined />}
+                danger
+                style={{ borderRadius: 24, fontWeight: 600, background: 'transparent', border: '1px solid rgba(255,77,79,0.4)' }}
+                onClick={() => { logout(); router.push('/coordinator/login') }}
+                data-testid="btn-logout"
+              >
+                Log Out
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -242,12 +260,16 @@ export default function GlassShell({ children }: { children: React.ReactNode }) 
               <div className={styles.iconBtn}><WalletOutlined /></div>
             </Tooltip>
             <div style={{ width: 1, height: 24, background: 'rgba(255,255,255,0.1)' }} />
-            <Avatar
-              style={{ background: '#2dd4bf', color: '#0f172a', fontWeight: 700, cursor: 'pointer' }}
-              size={36}
-            >
-              D
-            </Avatar>
+            <Tooltip title={isAuthenticated ? `${user?.name} — Click to log out` : 'Not logged in'}>
+              <Avatar
+                style={{ background: '#2dd4bf', color: '#0f172a', fontWeight: 700, cursor: 'pointer' }}
+                size={36}
+                onClick={isAuthenticated && isCoordinatorRoute ? () => { logout(); router.push('/coordinator/login') } : undefined}
+                data-testid="header-avatar"
+              >
+                {isAuthenticated ? (user?.name?.[0] ?? 'U') : 'G'}
+              </Avatar>
+            </Tooltip>
           </Space>
         </Header>
 

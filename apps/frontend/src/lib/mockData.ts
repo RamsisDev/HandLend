@@ -44,8 +44,8 @@ export const COMPANIES = [
     }
   },
   {
-    id: 2, disaster_id: 1, name: 'CargoSolidario', verification_status: 'active',
-    capacity: 'medium', trust_score: 78, coverage: 'Northern Chile',
+    id: 2, disaster_id: 2, name: 'CargoSolidario', verification_status: 'active',
+    capacity: 'medium', trust_score: 78, coverage: 'Norte Perú',
     response_time: '72h', mission_id: 2,
     genlayer_summary: 'Regional operator with a track record of 8 operations in earthquake-affected areas in northern Chile. Medium-high capacity. Active in the affected region. Positive evaluation with minor observations on response times.',
     assessment: {
@@ -89,6 +89,30 @@ export const COMPANIES = [
       last_mile_strategy: 'Pre-mapped alternative routes for areas without vehicle access',
       human_resources: '30 operators with INDECI training',
       needs: 'Inflatable boats, drinking water, emergency food supplies'
+    }
+  },
+  {
+    id: 4, disaster_id: 3, name: 'AyudaChaco', verification_status: 'active',
+    capacity: 'medium', trust_score: 65, coverage: 'Gran Chaco',
+    response_time: '96h', mission_id: 4,
+    genlayer_summary: 'New company on HandLend. Complete documentation submitted. No prior track record on the platform. Preliminary positive evaluation pending verifiable operational history.',
+    assessment: {
+      can_execute: 'Transport of drinking water and non-perishable food',
+      coverage_area: 'Central and Boreal Chaco',
+      resources: '6 tanker trucks, 15 collaborators',
+      risks: 'Long distances, limited road infrastructure',
+      limitations: 'No experience with major emergencies',
+      evidence: 'Sworn statement, tax records'
+    },
+    operational_plan: {
+      cargo_capacity: '2 tons/day',
+      estimated_time: '96h for first delivery',
+      coverage: 'Central Chaco, Boreal Chaco',
+      infrastructure: '6 tanker trucks + 1 logistics base',
+      risks: 'Extreme heat, limited road access',
+      last_mile_strategy: 'Mobile distribution points in indigenous communities',
+      human_resources: '15 collaborators + 3 drivers',
+      needs: 'Fuel, drinking water, non-perishable food'
     }
   },
 ]
@@ -160,3 +184,20 @@ export interface DeliveryQueueItem {
   timestamp: string
   sync_status: 'pending' | 'sending' | 'synced' | 'error'
 }
+
+export const MOCK_COORDINATOR_USERS = [
+  {
+    id: 101,
+    name: 'Roberto Fernández',
+    email: 'rfernandez@logihumanitas.cl',
+    password: 'coord2026',
+    organization: 'LogiHumanitas SpA',
+  },
+  {
+    id: 102,
+    name: 'María López',
+    email: 'mlopez@cargosolidario.cl',
+    password: 'coord2026',
+    organization: 'CargoSolidario',
+  },
+]
